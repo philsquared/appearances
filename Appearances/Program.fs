@@ -13,10 +13,8 @@ type EventMonth = { event : Event; year : int; month: int }
 type AppearanceOrder = Forward | Reverse
 
 type EventsWithAppearances = {
-    event : Event;
-    year : int;
-    month : int;
-    appearances : List<Appearance>;
+    key : EventMonth
+    appearances : List<Appearance>
 }
 
 let findOrCreate (dict: Dictionary<'K, 'V>) (key:'K) (creator:unit->'V) : 'V =
@@ -33,19 +31,16 @@ let pastAndFutureAppearances (appearances : Appearance list) =
 
     for a in appearances do
         let key : EventMonth = { event = a.event; year = a.date.Year; month = a.date.Month }
-        let ewa = findOrCreate dict key (fun unit -> {  event = a.event; 
-                                                        year = a.date.Year; 
-                                                        month = a.date.Month; 
-                                                        appearances = new List<Appearance>() } )
+        let ewa = findOrCreate dict key (fun unit -> { key = key; appearances = new List<Appearance>() } )
         ewa.appearances.Add( a )
 
     let appearancesByEvent = dict.Values |> Seq.toList
     let now = System.DateTime.Now
     //let now = System.DateTime.Parse "2015-05-05"
-    let isFuture year month = year > now.Year || (year = now.Year && month >= now.Month )
+    let isFuture eventMonth = eventMonth.year > now.Year || (eventMonth.year = now.Year && eventMonth.month >= now.Month )
 
-    let upcomingAppearances = appearancesByEvent |> List.filter( fun e -> isFuture e.year e.month )
-    let pastAppearances = appearancesByEvent |> List.filter( fun e -> not (isFuture e.year e.month) )
+    let upcomingAppearances = appearancesByEvent |> List.filter( fun e -> isFuture e.key )
+    let pastAppearances = appearancesByEvent |> List.filter( fun e -> not (isFuture e.key) )
     pastAppearances, upcomingAppearances
 
 let pastAppearances, upcomingAppearances = pastAndFutureAppearances allAppearances
@@ -72,8 +67,8 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
 
     let dict = new Dictionary<int, Dictionary<int, List<EventsWithAppearances>>>()
     for ewa in appearances do
-        let yearEntry = findOrCreate dict ewa.year (fun unit -> new Dictionary<int, List<EventsWithAppearances>>() )
-        let monthEntry = findOrCreate yearEntry ewa.month ( fun unit -> new List<EventsWithAppearances>() )
+        let yearEntry = findOrCreate dict ewa.key.year (fun unit -> new Dictionary<int, List<EventsWithAppearances>>() )
+        let monthEntry = findOrCreate yearEntry ewa.key.month ( fun unit -> new List<EventsWithAppearances>() )
         monthEntry.Add ewa
 
     let years = dict.Keys |> Seq.toList |> List.sort |> sortIntoDirection
@@ -107,16 +102,17 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
 
             let mutable firstEvent = true
             for ewa in eventsForTheMonth do
+                let event = ewa.key.event
                 let eventCell = XElement( xname "td",
                                     cssClass "eventName",
                                     XAttribute( xname "rowspan", ewa.appearances.Count.ToString() ) )
-                let nameBlock = embedInAnchor ewa.event.url (XText ewa.event.name )
+                let nameBlock = embedInAnchor event.url (XText event.name )
                 let nameDiv = XElement( xname "div", nameBlock )
                 eventCell.Add( nameDiv )
-                if ewa.event.location.IsSome then
-                    let location = sprintf " (%s, %s)" ewa.event.location.Value.city ewa.event.location.Value.country
+                if event.location.IsSome then
+                    let location = sprintf " (%s, %s)" event.location.Value.city event.location.Value.country
                     eventCell.Add( XElement( xname "div", cssClass "location", location ) )
-                else if ewa.event.eventType = EventType.Podcast then
+                else if event.eventType = EventType.Podcast then
                     eventCell.Add( XElement( xname "div", cssClass "location", "(podcast)" ) )
 
                 let mutable firstAppearance = true
