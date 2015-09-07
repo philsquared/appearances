@@ -10,6 +10,7 @@ let cssPrefix = @"/storage/"
 //let cssPrefix = ""
 
 type EventMonth = { event : Event; year : int; month: int }
+type AppearanceOrder = Forward | Reverse
 
 type EventsWithAppearances = {
     event : Event;
@@ -61,8 +62,13 @@ let embedInAnchor urlOpt node : XNode =
 
 let cssClass cls = XAttribute( xname "class", cls )
 
-let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list) =
+let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list) order =
     let monthNames = [|"Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec"|]
+
+    let sortIntoDirection l =
+        match order with
+        | AppearanceOrder.Forward -> l
+        | AppearanceOrder.Reverse -> List.rev l
 
     let dict = new Dictionary<int, Dictionary<int, List<EventsWithAppearances>>>()
     for ewa in appearances do
@@ -70,7 +76,7 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
         let monthEntry = findOrCreate yearEntry ewa.month ( fun unit -> new List<EventsWithAppearances>() )
         monthEntry.Add ewa
 
-    let years = dict.Keys |> Seq.toList |> List.sort |> List.rev
+    let years = dict.Keys |> Seq.toList |> List.sort |> sortIntoDirection
 
     for year in years do
         let row = XElement( xname "tr",
@@ -82,7 +88,7 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
 
         let yearEntry = dict.[year]
 
-        let months = yearEntry.Keys |> Seq.toList |> List.sort |> List.rev
+        let months = yearEntry.Keys |> Seq.toList |> List.sort |> sortIntoDirection
 
         for month in months do
             let monthEntry = yearEntry.[month]
@@ -97,7 +103,8 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
             let eventsForTheMonth = monthEntry 
                                     |> Seq.toList 
                                     |> List.sortBy( fun e -> e.appearances.[0].date ) 
-                                    |> List.rev
+                                    |> sortIntoDirection
+
             let mutable firstEvent = true
             for ewa in eventsForTheMonth do
                 let eventCell = XElement( xname "td",
@@ -152,8 +159,8 @@ let main argv =
     let mutable pastTable = XElement( xname "table" )
     let mutable futureTable = XElement( xname "table" )
 
-    addAppearanceRows pastTable pastAppearances
-    addAppearanceRows futureTable upcomingAppearances
+    addAppearanceRows pastTable pastAppearances AppearanceOrder.Reverse
+    addAppearanceRows futureTable upcomingAppearances AppearanceOrder.Forward
 
     let futureTitle = XElement( xname "h1", "Upcoming appearances" )
     let pastTitle = XElement( xname "h1", "Past appearances" )
