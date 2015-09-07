@@ -74,6 +74,12 @@ let functionalLondoners = {
         location = Some( { city = "London"; country = "UK" } );
         url = Some( "http://www.meetup.com/FSharpLondon" );
     }
+let seattleFsharpMeetup = {
+        eventType = EventType.Meetup;
+        name = "Seattle F# Meetup";
+        location = Some( { city = "Seattle"; country = "USA" } );
+        url = None // !TBD: update when known
+    }
 let meetingCpp2014 = {
         eventType = EventType.Conference;
         name = "MeetingC++";

@@ -343,18 +343,28 @@ let allAppearances = [
 
     {
         event = cppCon2015;
-        appearanceType = AppearanceType.Talk;
-        title = "Test-driven C++ With Catch";
-        infoUrl = None; // !TBD Update
-        videoUrl = None;
-        imageName = None;
-        date = System.DateTime.Parse( "2015-09-24" ); // !TBD Update
+        appearanceType = AppearanceType.Talk
+        title = "Test-driven C++ With Catch"
+        infoUrl = Some("http://cppcon2015.sched.org/event/a7e0138f6d94017d27e0a8f5b127c23d#.Vets-rSA3FI")
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse( "2015-09-22" )
+    };
+
+    {
+        event = cppCon2015;
+        appearanceType = AppearanceType.LightningTalk
+        title = "The Stand-Up"
+        infoUrl = None // !TBD
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse( "2015-09-23" ) // !TBD: update when known
     };
 
     {
         event = aylesburyTesters;
         appearanceType = AppearanceType.Talk;
-        title = "Test-driven C++ With Catch";
+        title = "Test Driven C++ with Catch - the state of testing in the world of C++";
         infoUrl = Some("http://www.meetup.com/SoftwareTestingClub/events/223732954/");
         videoUrl = None;
         imageName = None;
@@ -363,20 +373,30 @@ let allAppearances = [
     {
         event = accuLondon;
         appearanceType = AppearanceType.Talk;
-        title = "{TBA: Something about F#}";
-        infoUrl = None; // !TBD Update
+        title = "WTF?: What’s This F# (I keep hearing about)?";
+        infoUrl = Some("http://www.meetup.com/ACCULondon/events/225137940/");
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2015-09-17" ); // !TBD: update
+        date = System.DateTime.Parse( "2015-09-17" );
     };
     {
-        event = functionalLondoners;
-        appearanceType = AppearanceType.Talk;
-        title = "Seeking Simplicity";
-        infoUrl = None; // !TBD Update
-        videoUrl = None;
-        imageName = None;
-        date = System.DateTime.Parse( "2015-10-08" ); // !TBD: update
+        event = seattleFsharpMeetup
+        appearanceType = AppearanceType.Talk
+        title = "Seeking Simplicity"
+        infoUrl = None // !TBD: Update when known
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse( "2015-09-24" ) // !TBD: Update when known
+    };
+
+    {
+        event = functionalLondoners
+        appearanceType = AppearanceType.Talk
+        title = "Seeking Simplicity"
+        infoUrl = Some( "http://www.meetup.com/FSharpLondon/events/223918135/t/ra1_te/" )
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse( "2015-10-08" )
     };
 ]
 
