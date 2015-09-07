@@ -34,18 +34,18 @@ let pastAndFutureAppearances (appearances : Appearance list) =
     for a in appearances do
         let key : EventMonth = { event = a.event; year = a.date.Year; month = a.date.Month }
         let ewa = findOrCreate dict key (fun unit -> {  event = a.event; 
-                                                            year = a.date.Year; 
-                                                            month = a.date.Month; 
-                                                            appearances = new List<Appearance>() } )
+                                                        year = a.date.Year; 
+                                                        month = a.date.Month; 
+                                                        appearances = new List<Appearance>() } )
         ewa.appearances.Add( a )
 
-    let sortedAppearances = dict.Values |> Seq.toList |> List.sortBy( fun e -> e.year * 100 + e.month ) |> List.rev
+    let appearancesByEvent = dict.Values |> Seq.toList
     let now = System.DateTime.Now
     //let now = System.DateTime.Parse "2015-05-05"
     let isFuture year month = year > now.Year || (year = now.Year && month >= now.Month )
 
-    let upcomingAppearances = sortedAppearances |> List.filter( fun e -> isFuture e.year e.month )
-    let pastAppearances = sortedAppearances |> List.filter( fun e -> not (isFuture e.year e.month) )
+    let upcomingAppearances = appearancesByEvent |> List.filter( fun e -> isFuture e.year e.month )
+    let pastAppearances = appearancesByEvent |> List.filter( fun e -> not (isFuture e.year e.month) )
     pastAppearances, upcomingAppearances
 
 let pastAppearances, upcomingAppearances = pastAndFutureAppearances allAppearances
@@ -184,4 +184,5 @@ let main argv =
     xml.Save( "/Development/Scratch/Appearances/index.html" )
 
     0 // return an integer exit code
+
 

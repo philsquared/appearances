@@ -283,16 +283,16 @@ let allAppearances = [
         infoUrl = None;
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2010-04-10" ); // !TBD find exact date
+        date = System.DateTime.Parse( "2010-04-16" );
     };
     {
         event = stackOverflow;
         appearanceType = AppearanceType.Talk;
         title = "iPhone Development Jump Start";
-        infoUrl = None;
+        infoUrl = Some("http://www.levelofindirection.com/journal/2009/10/29/stackoverflow-devdays-london.html");
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2009-10-10" ); // !TBD find exact date
+        date = System.DateTime.Parse( "2009-10-28" );
     };
     {
         event = lidg;
@@ -301,7 +301,7 @@ let allAppearances = [
         infoUrl = None;
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2009-06-10" ); // !TBD find exact date
+        date = System.DateTime.Parse( "2009-06-03" );
     };
     {
         event = accu2009;
@@ -310,7 +310,7 @@ let allAppearances = [
         infoUrl = Some("http://accu.org/index.php/conferences/accu_conference_2009/accu2009_sessions#Objective-C%20in%2090%20minutes");
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2009-06-10" ); // !TBD find exact date
+        date = System.DateTime.Parse( "2009-04-23" );
     };
     {
         event = accu2007;
@@ -319,7 +319,7 @@ let allAppearances = [
         infoUrl = Some("http://accu.org/index.php/conferences/accu_conference_2007/accu2007_sessions#The%20other%2099%20percent");
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2007-04-10" ); // !TBD find exact date
+        date = System.DateTime.Parse( "2007-04-14" );
     };
     {
         event = accu2004;
@@ -328,7 +328,7 @@ let allAppearances = [
         infoUrl = Some("http://accu.org/index.php/conferences/2004/speakers2004");
         videoUrl = None;
         imageName = None;
-        date = System.DateTime.Parse( "2004-04-10" ); // !TBD find exact date
+        date = System.DateTime.Parse( "2004-04-16" );
     };
 
     {
