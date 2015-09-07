@@ -1,7 +1,4 @@
-﻿// Learn more about F# at http://fsharp.net
-// See the 'F# Tutorial' project for more help.
-
-open Model
+﻿open Model
 open EventData
 open AppearanceData
 open System.Collections.Generic
@@ -129,11 +126,11 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
 
                     let suffix, talkClass = 
                         match a.appearanceType with
-                        | AppearanceType.Keynote -> "[keynote]", "keynote"
-                        | AppearanceType.LightningTalk -> "[lightning talk]", "lightning"
-                        | AppearanceType.Panel -> "[panel]", "panel"
-                        | AppearanceType.Interview -> "[podcast interview]", "interview"
-                        | _ -> "", ""
+                        | AppearanceType.Keynote ->         "[keynote]", "keynote"
+                        | AppearanceType.LightningTalk ->   "[lightning talk]", "lightning"
+                        | AppearanceType.Panel ->           "[panel]", "panel"
+                        | AppearanceType.Interview ->       "[podcast interview]", "interview"
+                        | _ ->                              "", ""
                     if suffix <> "" then
                         appearanceCell.Add( " ", XElement( xname "div", cssClass ("type " + talkClass), suffix ) )
 
