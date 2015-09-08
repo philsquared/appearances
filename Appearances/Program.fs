@@ -28,31 +28,25 @@ let findOrCreate (dict: Dictionary<'K, 'V>) (key:'K) (creator:unit->'V) : 'V =
         newEntry
 
 let pastAndFutureAppearances (appearances : Appearance list) =
-    let mutable dict : Map<EventMonth, Appearance list> = Map.empty
 
-    for a in appearances do
-        let key = { event = a.event; year = a.date.Year; month = a.date.Month }
-
-        let value = 
-            match dict.TryFind key with
-            | Some existingAppearances ->  a :: existingAppearances
-            | None -> [a]
-        dict <- dict.Add (key, value)
-
-    let appearancesByEvent = 
-        dict |> Seq.map( fun e -> { key = e.Key; appearances = e.Value } ) |> Seq.toList
-    
     let now = System.DateTime.Now
     //let now = System.DateTime.Parse "2015-05-05"
     let isFuture eventMonth = eventMonth.year > now.Year || (eventMonth.year = now.Year && eventMonth.month >= now.Month )
 
+    let appearancesByEvent = 
+        appearances
+        |> List.fold( fun (dict:Map<EventMonth, Appearance list>) a -> 
+                        let key = { event = a.event; year = a.date.Year; month = a.date.Month }
+                        let existing = match dict.TryFind key with Some a -> a | None -> []
+                        dict.Add (key, a :: existing) ) Map.empty
+        |> Seq.map( fun e -> { key = e.Key; appearances = e.Value } )
+        |> Seq.toList
+    
     let upcomingAppearances = appearancesByEvent |> List.filter( fun e -> isFuture e.key )
     let pastAppearances = appearancesByEvent |> List.filter( fun e -> not (isFuture e.key) )
     pastAppearances, upcomingAppearances
 
 let pastAppearances, upcomingAppearances = pastAndFutureAppearances allAppearances
-
-let appearances = pastAppearances
 
 
 let xname str = XName.Get str
