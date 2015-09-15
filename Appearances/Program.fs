@@ -15,7 +15,7 @@ type EventMonth = { event : Event; year : int; month: int }
 
 type EventsWithAppearances = {
     key : EventMonth
-    appearances : Appearance list
+    appearances : List<Appearance>
 }
 
 let findOrCreate (dict: Dictionary<'K, 'V>) (key:'K) (creator:unit->'V) : 'V =
@@ -27,30 +27,25 @@ let findOrCreate (dict: Dictionary<'K, 'V>) (key:'K) (creator:unit->'V) : 'V =
         dict.Add( key, newEntry )
         newEntry
 
-let futureAndPastAppearances (appearances : Appearance list) =
+let pastAndFutureAppearances (appearances : Appearance list) =
+    let dict = new Dictionary<EventMonth, EventsWithAppearances>()
 
-    let appearancesByEvent = 
-        appearances
-        |> List.fold( fun (m:Map<EventMonth, Appearance list>) a -> 
-                        let key = { event = a.event; year = a.date.Year; month = a.date.Month }
-                        let newList = match m.TryFind key with 
-                                        | Some existing -> a :: existing
-                                        | None -> [a]
-                        m.Add (key, newList) ) Map.empty
-        |> Seq.map( fun e -> { key = e.Key; appearances = e.Value } )
-        |> Seq.toList
+    for a in appearances do
+        let key : EventMonth = { event = a.event; year = a.date.Year; month = a.date.Month }
+        let ewa = findOrCreate dict key (fun unit -> { key = key; appearances = new List<Appearance>() } )
+        ewa.appearances.Add( a )
 
-    //let now = System.DateTime.Parse "2015-05-05"
+    let appearancesByEvent = dict.Values |> Seq.toList
+
     let now = System.DateTime.Now
+    //let now = System.DateTime.Parse "2015-05-05"
+    let isFuture eventMonth = eventMonth.year > now.Year || (eventMonth.year = now.Year && eventMonth.month >= now.Month )
 
-    let isFuture (ewa:EventsWithAppearances) = 
-        let year, month = ewa.key.year, ewa.key.month
-        year > now.Year || (year = now.Year && month >= now.Month )
+    let upcomingAppearances = appearancesByEvent |> List.filter( fun e -> isFuture e.key )
+    let pastAppearances = appearancesByEvent |> List.filter( fun e -> not (isFuture e.key) )
+    pastAppearances, upcomingAppearances
 
-    appearancesByEvent |> List.partition isFuture
-
-let pastAppearances, upcomingAppearances = futureAndPastAppearances allAppearances
-
+let pastAppearances, upcomingAppearances = pastAndFutureAppearances allAppearances
 
 let xname str = XName.Get str
 
@@ -92,7 +87,7 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
         for month in months do
             let monthEntry = yearEntry.[month]
 
-            let appearancesThisMonth = monthEntry |> Seq.fold( fun a ewa -> a + ewa.appearances.Length ) 0
+            let appearancesThisMonth = monthEntry |> Seq.fold( fun a ewa -> a + ewa.appearances.Count ) 0
 
             let monthCell = XElement( xname "td",
                                 cssClass "month",
@@ -109,7 +104,7 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
                 let event = ewa.key.event
                 let eventCell = XElement( xname "td",
                                     cssClass "eventName",
-                                    XAttribute( xname "rowspan", ewa.appearances.Length.ToString() ) )
+                                    XAttribute( xname "rowspan", ewa.appearances.Count.ToString() ) )
                 let nameBlock = embedInAnchor event.url (XText event.name )
                 let nameDiv = XElement( xname "div", nameBlock )
                 eventCell.Add( nameDiv )
