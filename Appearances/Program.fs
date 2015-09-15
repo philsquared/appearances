@@ -27,25 +27,29 @@ let findOrCreate (dict: Dictionary<'K, 'V>) (key:'K) (creator:unit->'V) : 'V =
         dict.Add( key, newEntry )
         newEntry
 
-let pastAndFutureAppearances (appearances : Appearance list) =
-
-    //let now = System.DateTime.Parse "2015-05-05"
-    let now = System.DateTime.Now
-    let isFuture eventMonth = eventMonth.year > now.Year || (eventMonth.year = now.Year && eventMonth.month >= now.Month )
+let futureAndPastAppearances (appearances : Appearance list) =
 
     let appearancesByEvent = 
         appearances
         |> List.fold( fun (m:Map<EventMonth, Appearance list>) a -> 
                         let key = { event = a.event; year = a.date.Year; month = a.date.Month }
-                        let existing = match m.TryFind key with Some a -> a | None -> []
-                        m.Add (key, a :: existing) ) Map.empty
+                        let newList = match m.TryFind key with 
+                                        | Some existing -> a :: existing
+                                        | None -> [a]
+                        m.Add (key, newList) ) Map.empty
         |> Seq.map( fun e -> { key = e.Key; appearances = e.Value } )
         |> Seq.toList
 
-    let upcomingAppearances, pastAppearances = appearancesByEvent |> List.partition( fun e -> isFuture e.key )
-    pastAppearances, upcomingAppearances
+    //let now = System.DateTime.Parse "2015-05-05"
+    let now = System.DateTime.Now
 
-let pastAppearances, upcomingAppearances = pastAndFutureAppearances allAppearances
+    let isFuture (ewa:EventsWithAppearances) = 
+        let year, month = ewa.key.year, ewa.key.month
+        year > now.Year || (year = now.Year && month >= now.Month )
+
+    appearancesByEvent |> List.partition isFuture
+
+let pastAppearances, upcomingAppearances = futureAndPastAppearances allAppearances
 
 
 let xname str = XName.Get str
