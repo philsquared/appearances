@@ -43,13 +43,13 @@ let futureAndPastAppearances (appearances : Appearance list) =
     //let now = System.DateTime.Parse "2015-05-05"
     let now = System.DateTime.Now
 
-    let isFuture (ewa:EventsWithAppearances) = 
-        let year, month = ewa.key.year, ewa.key.month
-        year > now.Year || (year = now.Year && month >= now.Month )
+    let isFuture ewa = 
+        let firstDate = ewa.appearances.[ewa.appearances.Length-1].date
+        firstDate > now
 
     appearancesByEvent |> List.partition isFuture
 
-let pastAppearances, upcomingAppearances = futureAndPastAppearances allAppearances
+let upcomingAppearances, pastAppearances = futureAndPastAppearances allAppearances
 
 
 let xname str = XName.Get str
