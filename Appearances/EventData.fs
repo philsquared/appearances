@@ -111,6 +111,12 @@ let norDevCon2014 = {
         location = Some { city = "Norwich"; country = "UK" }
         url = Some "http://www.nordevcon.com/nordevcon2014"
     }
+let norDevCon2016 = {
+        eventType = EventType.Conference
+        name = "NorDevCon"
+        location = Some { city = "Norwich"; country = "UK" }
+        url = None // !TBD add url
+    }
 let bcsEdinburgh = {
         eventType = EventType.Meetup
         name = "BCS Edinburgh"

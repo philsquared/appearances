@@ -343,8 +343,8 @@ let allAppearances = [
         appearanceType = AppearanceType.Talk
         title = "Test-driven C++ With Catch"
         infoUrl = Some "http://cppcon2015.sched.org/event/a7e0138f6d94017d27e0a8f5b127c23d#.Vets-rSA3FI"
-        videoUrl = None
-        imageName = None
+        videoUrl = Some "https://www.youtube.com/watch?v=gdzP3pAC6UI"
+        imageName = Some "cppcon2015.jpg"
         date = System.DateTime.Parse "2015-09-22"
     }
     {
@@ -354,7 +354,7 @@ let allAppearances = [
         infoUrl = None // !TBD
         videoUrl = None
         imageName = None
-        date = System.DateTime.Parse "2015-09-23" // !TBD: update when known
+        date = System.DateTime.Parse "2015-09-22"
     }
     {
         event = aylesburyTesters
@@ -391,6 +391,24 @@ let allAppearances = [
         videoUrl = None
         imageName = None
         date = System.DateTime.Parse "2015-10-08"
+    }
+    {
+        event = functionalLondoners
+        appearanceType = AppearanceType.LightningTalk
+        title = "The Stand Up"
+        infoUrl = None
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2015-10-08"
+    }
+    {
+        event = norDevCon2016
+        appearanceType = AppearanceType.Talk
+        title = "Seeking Simplicity"
+        infoUrl = None // !TBD: add url
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-02-27"
     }
 ]
 
