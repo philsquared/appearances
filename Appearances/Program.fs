@@ -1,13 +1,10 @@
 ﻿open Model
 open EventData
 open AppearanceData
-open System.Collections.Generic
 open System.Xml.Linq
 
-let imagePrefix = @"/storage/conf_images/"
-let cssPrefix = @"/storage/"
-//let imagePrefix = @"images/"
-//let cssPrefix = ""
+let imagePrefix = @"../storage/conf_images/"
+let cssPrefix = @"../storage/"
 
 type AppearanceOrder = Forward | Reverse
 
@@ -17,15 +14,6 @@ type EventsWithAppearances = {
     key : EventMonth
     appearances : Appearance list
 }
-
-let findOrCreate (dict: Dictionary<'K, 'V>) (key:'K) (creator:unit->'V) : 'V =
-    let ok, existing = dict.TryGetValue( key )
-    if ok then 
-        existing
-    else
-        let newEntry = creator()
-        dict.Add( key, newEntry )
-        newEntry
 
 let futureAndPastAppearances (appearances : Appearance list) =
 
@@ -61,21 +49,18 @@ let embedInAnchor urlOpt node : XNode =
 
 let cssClass cls = XAttribute( xname "class", cls )
 
-let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list) order =
+let makeAppearanceRows (appearances: EventsWithAppearances list) order =
+    let rows : XElement list ref = ref []
     let monthNames = [|"Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec"|]
 
-    let sortIntoDirection l =
+    let orderAppearance l =
         match order with
         | AppearanceOrder.Forward -> l
         | AppearanceOrder.Reverse -> List.rev l
 
-    let dict = new Dictionary<int, Dictionary<int, List<EventsWithAppearances>>>()
-    for ewa in appearances do
-        let yearEntry = findOrCreate dict ewa.key.year (fun unit -> new Dictionary<int, List<EventsWithAppearances>>() )
-        let monthEntry = findOrCreate yearEntry ewa.key.month ( fun unit -> new List<EventsWithAppearances>() )
-        monthEntry.Add ewa
-
-    let years = dict.Keys |> Seq.toList |> List.sort |> sortIntoDirection
+    let yearToAppearances = appearances |> List.groupBy (fun a -> a.key.year)
+    let years = yearToAppearances |> List.map fst |> List.sort |> orderAppearance
+    let appearancesByYear = yearToAppearances |> Map.ofList
 
     for year in years do
         let row = XElement( xname "tr",
@@ -83,14 +68,16 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
                         cssClass "year",
                         XAttribute( xname "colspan", "3" ),
                         sprintf "%d" year ) )
-        table.Add( row )
+        rows := row :: !rows
 
-        let yearEntry = dict.[year]
+        let yearEntry = appearancesByYear.[year]
 
-        let months = yearEntry.Keys |> Seq.toList |> List.sort |> sortIntoDirection
+        let monthsToEvents = yearEntry |> List.groupBy (fun ewa -> ewa.key.month )
+        let eventsByMonth = monthsToEvents |> Map.ofList
+        let months = monthsToEvents |> List.map fst |> List.sort |> orderAppearance
 
         for month in months do
-            let monthEntry = yearEntry.[month]
+            let monthEntry = eventsByMonth.[month]
 
             let appearancesThisMonth = monthEntry |> Seq.fold( fun a ewa -> a + ewa.appearances.Length ) 0
 
@@ -102,7 +89,7 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
             let eventsForTheMonth = monthEntry 
                                     |> Seq.toList 
                                     |> List.sortBy( fun e -> e.appearances.[0].date ) 
-                                    |> sortIntoDirection
+                                    |> orderAppearance
 
             let mutable firstEvent = true
             for ewa in eventsForTheMonth do
@@ -150,14 +137,21 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
                         row.Add( eventCell )
                         firstAppearance <- false
                     row.Add( appearanceCell )
-                    table.Add( row )
+                    rows := row :: !rows
+
+    !rows |> List.rev
+
+let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list) order =
+    let rows = makeAppearanceRows appearances order
+    for row in rows do
+        table.Add row
 
 
 [<EntryPoint>]
 let main argv = 
 
-    let mutable pastTable = XElement( xname "table" )
-    let mutable futureTable = XElement( xname "table" )
+    let pastTable = XElement( xname "table" )
+    let futureTable = XElement( xname "table" )
 
     addAppearanceRows pastTable pastAppearances AppearanceOrder.Reverse
     addAppearanceRows futureTable upcomingAppearances AppearanceOrder.Forward
@@ -181,7 +175,7 @@ let main argv =
                     pastTable ) )
 
     printf "%s\n" (xml.ToString())
-    xml.Save( "/Development/Scratch/Appearances/index.html" )
+    xml.Save( "/Development/Scratch/Appearances/output/index.html" )
 
     0 // return an integer exit code
 
