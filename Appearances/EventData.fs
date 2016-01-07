@@ -2,11 +2,23 @@
 
 open Model
 
+let ndcLondon = {
+        eventType = EventType.Conference
+        name = "NDC London"
+        location = Some { city = "London"; country = "UK" }
+        url = Some "http://ndc-london.com"
+    }
 let ndcOslo = {
         eventType = EventType.Conference
         name = "NDC Oslo"
         location = Some { city = "Oslo"; country = "Norway" }
         url = Some "http://ndcoslo.com"
+    }
+let accu2016 = {
+        eventType = EventType.Conference
+        name = "Accu 2016"
+        location = Some { city = "Bristol"; country = "UK" }
+        url = Some "http://accu.org/index.php/conferences/accu_conference_2016"
     }
 let accu2015 = {
         eventType = EventType.Conference
@@ -78,7 +90,7 @@ let seattleFsharpMeetup = {
         eventType = EventType.Meetup
         name = "Seattle F# Meetup"
         location = Some { city = "Seattle"; country = "USA" }
-        url = None // !TBD: update when known
+        url = Some "http://www.meetup.com/FSharpSeattle"
     }
 let meetingCpp2014 = {
         eventType = EventType.Conference
@@ -115,7 +127,7 @@ let norDevCon2016 = {
         eventType = EventType.Conference
         name = "NorDevCon"
         location = Some { city = "Norwich"; country = "UK" }
-        url = None // !TBD add url
+        url = Some "http://www.nordevcon.com"
     }
 let bcsEdinburgh = {
         eventType = EventType.Meetup
@@ -181,5 +193,5 @@ let aylesburyTesters = {
         eventType = EventType.Meetup
         name = "Aylesbury Testers"
         location = Some { city = "Aylesbury"; country = "UK" }
-        url = None // !TBD: check url
+        url = Some "http://www.meetup.com/SoftwareTestingClub/events/223732954/?a=ro2_gnl&gj=ro2_e&rv=ro2_e&_af=event&_af_eid=223732954&https=off"
     }

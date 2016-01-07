@@ -6,6 +6,24 @@ open EventData
 
 let allAppearances = [
     {
+        event = accu2016
+        appearanceType = AppearanceType.Talk
+        title = "Swift for the curious"
+        infoUrl = None // !TBD
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-04-23" // !TBD: add correct date
+    }
+    {
+        event = ndcLondon
+        appearanceType = AppearanceType.Talk
+        title = "Seeking Simplicity"
+        infoUrl = Some "http://ndc-london.com/talk/phil-nash"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-01-13"
+    }
+    {
         event = ndcOslo
         appearanceType = AppearanceType.Talk
         title = "Test Driven C++ with Catch"
@@ -351,9 +369,9 @@ let allAppearances = [
         event = cppCon2015
         appearanceType = AppearanceType.LightningTalk
         title = "The Stand-Up"
-        infoUrl = None // !TBD
-        videoUrl = None
-        imageName = None
+        infoUrl = None
+        videoUrl = Some "https://t.co/redirect?url=https%3A%2F%2Ft.co%2FqoR33ZMLhq%3Fcn%3DcmVwbHk%253D&t=1&cn=cmVwbHk%3D&sig=f61dcdc62d9b5a16d80972c5e3fac9f42f22b41a&iid=169956e6c3ab4531a25e5614e3ac1f69&uid=19881648&nid=27+228"
+        imageName = Some "cppcon2015-thestandup.jpg"
         date = System.DateTime.Parse "2015-09-22"
     }
     {
@@ -378,10 +396,10 @@ let allAppearances = [
         event = seattleFsharpMeetup
         appearanceType = AppearanceType.Talk
         title = "Seeking Simplicity"
-        infoUrl = None // !TBD: Update when known
+        infoUrl = Some "http://www.meetup.com/FSharpSeattle/events/225449811/?a=co2_grp&gj=co2&rv=co2"
         videoUrl = None
         imageName = None
-        date = System.DateTime.Parse "2015-09-24" // !TBD: Update when known
+        date = System.DateTime.Parse "2015-09-24"
     }
     {
         event = functionalLondoners
@@ -405,7 +423,7 @@ let allAppearances = [
         event = norDevCon2016
         appearanceType = AppearanceType.Talk
         title = "Seeking Simplicity"
-        infoUrl = None // !TBD: add url
+        infoUrl = Some "http://www.nordevcon.com/sessions/#philnash"
         videoUrl = None
         imageName = None
         date = System.DateTime.Parse "2016-02-27"
