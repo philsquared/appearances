@@ -1,7 +1,6 @@
 ﻿open Model
 open EventData
 open AppearanceData
-open System.Xml.Linq
 
 let imagePrefix = @"../storage/conf_images/"
 let cssPrefix = @"../storage/"
@@ -37,17 +36,19 @@ let futureAndPastAppearances (appearances : Appearance list) =
 
     appearancesByEvent |> List.partition isFuture
 
-let upcomingAppearances, pastAppearances = futureAndPastAppearances allAppearances
+// h/t Phil Trelford - http://trelford.com/blog/post/F-XML-Comparison-(XElement-vs-XmlDocument-vs-XmlReaderXmlWriter-vs-Discriminated-Unions).aspx
+type XElement (name:string, [<System.ParamArray>] values:obj []) = 
+    inherit System.Xml.Linq.XElement
+        (System.Xml.Linq.XName.op_Implicit(name), values) 
 
+let XAttr name value = System.Xml.Linq.XAttribute( System.Xml.Linq.XName.op_Implicit(name), value.ToString() )
 
-let xname str = XName.Get str
-
-let embedInAnchor urlOpt node : XNode =
+let embedInAnchor urlOpt node : System.Xml.Linq.XNode =
     match urlOpt with
-    | Some( url ) -> XElement( xname "a", XAttribute( xname "href", url ), node ) :> XNode
+    | Some( url ) -> XElement( "a", XAttr "href" url, node ) :> System.Xml.Linq.XNode
     | None -> node
 
-let cssClass cls = XAttribute( xname "class", cls )
+let cssClass cls = XAttr "class" cls
 
 let makeAppearanceRows (appearances: EventsWithAppearances list) order =
     let rows : XElement list ref = ref []
@@ -63,10 +64,10 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
     let appearancesByYear = yearToAppearances |> Map.ofList
 
     for year in years do
-        let row = XElement( xname "tr",
-                    XElement( xname "td",
+        let row = XElement( "tr",
+                    XElement( "td",
                         cssClass "year",
-                        XAttribute( xname "colspan", "3" ),
+                        XAttr "colspan" "3",
                         sprintf "%d" year ) )
         rows := row :: !rows
 
@@ -81,9 +82,9 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
 
             let appearancesThisMonth = monthEntry |> Seq.fold( fun a ewa -> a + ewa.appearances.Length ) 0
 
-            let monthCell = XElement( xname "td",
+            let monthCell = XElement( "td",
                                 cssClass "month",
-                                XAttribute( xname "rowspan", appearancesThisMonth.ToString() ),
+                                XAttr "rowspan" appearancesThisMonth,
                                 sprintf "%s" monthNames.[month-1] )
 
             let eventsForTheMonth = monthEntry 
@@ -94,30 +95,20 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
             let mutable firstEvent = true
             for ewa in eventsForTheMonth do
                 let event = ewa.key.event
-                let eventCell = XElement( xname "td",
+                let eventCell = XElement( "td",
                                     cssClass "eventName",
-                                    XAttribute( xname "rowspan", ewa.appearances.Length.ToString() ) )
-                let nameBlock = embedInAnchor event.url (XText event.name )
-                let nameDiv = XElement( xname "div", nameBlock )
+                                    XAttr "rowspan" ewa.appearances.Length )
+                let nameBlock = embedInAnchor event.url (System.Xml.Linq.XText event.name )
+                let nameDiv = XElement( "div", nameBlock )
                 eventCell.Add( nameDiv )
                 if event.location.IsSome then
                     let location = sprintf " (%s, %s)" event.location.Value.city event.location.Value.country
-                    eventCell.Add( XElement( xname "div", cssClass "location", location ) )
+                    eventCell.Add( XElement( "div", cssClass "location", location ) )
                 else if event.eventType = EventType.Podcast then
-                    eventCell.Add( XElement( xname "div", cssClass "location", "(podcast)" ) )
+                    eventCell.Add( XElement( "div", cssClass "location", "(podcast)" ) )
 
                 let mutable firstAppearance = true
                 for a in ewa.appearances do
-                    let appearanceCell = XElement( xname "td",
-                                            cssClass "appearanceTitle" )
-                    if a.imageName.IsSome then
-                        let img = XElement( xname "img",
-                                                XAttribute( xname "src", imagePrefix + a.imageName.Value ),
-                                                cssClass "thumbnail" )
-                        appearanceCell.Add( embedInAnchor a.videoUrl img )
-
-                    appearanceCell.Add( embedInAnchor a.infoUrl (XText a.title) )
-
                     let suffix, talkClass = 
                         match a.appearanceType with
                         | AppearanceType.Keynote ->         "[keynote]", "keynote"
@@ -125,11 +116,21 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                         | AppearanceType.Panel ->           "[panel]", "panel"
                         | AppearanceType.Interview ->       "[podcast interview]", "interview"
                         | _ ->                              "", ""
+                    let appearanceCell = XElement( "td", cssClass "appearanceTitle" )
+
+                    if a.imageName.IsSome then
+                        let img = XElement( "img",
+                                                XAttr "src" (imagePrefix + a.imageName.Value),
+                                                cssClass "thumbnail" )
+                        appearanceCell.Add( embedInAnchor a.videoUrl img )
+
+                    appearanceCell.Add( embedInAnchor a.infoUrl (System.Xml.Linq.XText a.title) )
+
                     if suffix <> "" then
-                        appearanceCell.Add( " ", XElement( xname "div", cssClass ("type " + talkClass), suffix ) )
+                        appearanceCell.Add( " ", XElement( "div", cssClass ("type " + talkClass), suffix ) )
 
 
-                    let row = XElement( xname "tr" )
+                    let row = XElement( "tr" )
                     if firstEvent then
                         row.Add( monthCell )
                         firstEvent <- false
@@ -150,27 +151,28 @@ let addAppearanceRows (table:XElement) (appearances: EventsWithAppearances list)
 [<EntryPoint>]
 let main argv = 
 
-    let pastTable = XElement( xname "table" )
-    let futureTable = XElement( xname "table" )
+    let pastTable = XElement( "table" )
+    let futureTable = XElement( "table" )
 
+    let upcomingAppearances, pastAppearances = futureAndPastAppearances allAppearances
     addAppearanceRows pastTable pastAppearances AppearanceOrder.Reverse
     addAppearanceRows futureTable upcomingAppearances AppearanceOrder.Forward
 
-    let futureTitle = XElement( xname "h1", "Upcoming appearances" )
-    let pastTitle = XElement( xname "h1", "Past appearances" )
+    let futureTitle = XElement( "h1", "Upcoming appearances" )
+    let pastTitle = XElement( "h1", "Past appearances" )
 
-    let head = XElement( xname "head",
-                XElement( xname "link",
-                    XAttribute( xname "href", cssPrefix + "appearances.css" ),
-                    XAttribute( xname "rel", "stylesheet" ),
-                    XAttribute( xname "type", "text/css" ) ) )
+    let head = XElement( "head",
+                XElement( "link",
+                    XAttr "href" (cssPrefix + "appearances.css"),
+                    XAttr "rel" "stylesheet",
+                    XAttr "type" "text/css" ) )
 
-    let xml = XElement( xname "html",
+    let xml = XElement( "html",
                 head,
-                XElement( xname "body",
+                XElement( "body",
                     futureTitle,
                     futureTable,
-                    XElement( xname "br" ),
+                    XElement( "br" ),
                     pastTitle,
                     pastTable ) )
 
