@@ -41,7 +41,11 @@ type XElement (name:string, [<System.ParamArray>] values:obj []) =
     inherit System.Xml.Linq.XElement
         (System.Xml.Linq.XName.op_Implicit(name), values) 
 
+let makeElement name (children : obj seq) = 
+    System.Xml.Linq.XElement( System.Xml.Linq.XName.op_Implicit(name), children )
+
 let XAttr name value = System.Xml.Linq.XAttribute( System.Xml.Linq.XName.op_Implicit(name), value.ToString() )
+let XText value = System.Xml.Linq.XText( value.ToString() )
 
 let embedInAnchor urlOpt node : System.Xml.Linq.XNode =
     match urlOpt with
@@ -51,7 +55,7 @@ let embedInAnchor urlOpt node : System.Xml.Linq.XNode =
 let cssClass cls = XAttr "class" cls
 
 let makeAppearanceRows (appearances: EventsWithAppearances list) order =
-    let rows : XElement list ref = ref []
+    let rows : System.Xml.Linq.XElement list ref = ref []
     let monthNames = [|"Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec"|]
 
     let orderAppearance l =
@@ -64,11 +68,15 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
     let appearancesByYear = yearToAppearances |> Map.ofList
 
     for year in years do
-        let row = XElement( "tr",
-                    XElement( "td",
-                        cssClass "year",
-                        XAttr "colspan" "3",
-                        sprintf "%d" year ) )
+        let row = makeElement "tr"
+                    [   
+                        makeElement "td"
+                            [
+                                cssClass "year"
+                                XAttr "colspan" "3"
+                                XText (sprintf "%d" year)
+                            ]
+                     ]
         rows := row :: !rows
 
         let yearEntry = appearancesByYear.[year]
@@ -98,7 +106,7 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                 let eventCell = XElement( "td",
                                     cssClass "eventName",
                                     XAttr "rowspan" ewa.appearances.Length )
-                let nameBlock = embedInAnchor event.url (System.Xml.Linq.XText event.name )
+                let nameBlock = embedInAnchor event.url (XText event.name )
                 let nameDiv = XElement( "div", nameBlock )
                 eventCell.Add( nameDiv )
                 if event.location.IsSome then
@@ -116,28 +124,38 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                         | AppearanceType.Panel ->           "[panel]", "panel"
                         | AppearanceType.Interview ->       "[podcast interview]", "interview"
                         | _ ->                              "", ""
-                    let appearanceCell = XElement( "td", cssClass "appearanceTitle" )
 
-                    if a.imageName.IsSome then
-                        let img = XElement( "img",
-                                                XAttr "src" (imagePrefix + a.imageName.Value),
-                                                cssClass "thumbnail" )
-                        appearanceCell.Add( embedInAnchor a.videoUrl img )
+                    let appearanceNodes : obj list =
+                        [cssClass "appearanceTitle"]
+                        @
+                        if a.imageName.IsSome then
+                            let img = makeElement "img" [XAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
+                            [embedInAnchor a.videoUrl img]
+                        else
+                            []
+                        @
+                        [embedInAnchor a.infoUrl (XText a.title)]
+                        @
+                        if suffix <> "" then
+                            [ XText " "; makeElement "div" [cssClass ("type " + talkClass); suffix] ]
+                        else
+                            []                        
+                    let appearanceCell = makeElement "td" appearanceNodes
 
-                    appearanceCell.Add( embedInAnchor a.infoUrl (System.Xml.Linq.XText a.title) )
+                    let rowNodes : obj list =
+                        if firstEvent then
+                            firstEvent <- false
+                            [monthCell]
+                         else
+                            []
+                        @
+                        if firstAppearance then
+                            firstAppearance <- false
+                            [eventCell]
+                        else
+                            []
+                    let row = makeElement "tr" (rowNodes @ [appearanceCell])
 
-                    if suffix <> "" then
-                        appearanceCell.Add( " ", XElement( "div", cssClass ("type " + talkClass), suffix ) )
-
-
-                    let row = XElement( "tr" )
-                    if firstEvent then
-                        row.Add( monthCell )
-                        firstEvent <- false
-                    if firstAppearance then
-                        row.Add( eventCell )
-                        firstAppearance <- false
-                    row.Add( appearanceCell )
                     rows := row :: !rows
 
     !rows |> List.rev
