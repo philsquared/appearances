@@ -116,41 +116,42 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                     eventCell.Add( XElement( "div", cssClass "location", "(podcast)" ) )
 
                 let mutable firstAppearance = true
-                for a in ewa.appearances do
-                    let suffix, talkClass = 
-                        match a.appearanceType with
-                        | AppearanceType.Keynote ->         "[keynote]", "keynote"
-                        | AppearanceType.LightningTalk ->   "[lightning talk]", "lightning"
-                        | AppearanceType.Panel ->           "[panel]", "panel"
-                        | AppearanceType.Interview ->       "[podcast interview]", "interview"
-                        | _ ->                              "", ""
+                let appearanceElements =
+                    ewa.appearances 
+                    |> List.map( fun a ->
+                                    let suffix, talkClass = 
+                                        match a.appearanceType with
+                                        | Keynote ->         "[keynote]", "keynote"
+                                        | LightningTalk ->   "[lightning talk]", "lightning"
+                                        | Panel ->           "[panel]", "panel"
+                                        | Interview ->       "[podcast interview]", "interview"
+                                        | _ ->               "", ""
 
-                    let appearanceNodes =
-                        seq {
-                            yield cssClass "appearanceTitle"
-                            if a.imageName.IsSome then
-                                let img = makeElement "img" [XAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
-                                yield embedInAnchor a.videoUrl img
-                            yield embedInAnchor a.infoUrl (XText a.title)
-                            if suffix <> "" then
-                                yield XText " "
-                                yield makeElement "div" [cssClass ("type " + talkClass); suffix] :> obj
-                        }
-                    let appearanceCell = makeElement "td" appearanceNodes
+                                    let appearanceNodes =
+                                        seq {
+                                            yield cssClass "appearanceTitle"
+                                            if a.imageName.IsSome then
+                                                let img = makeElement "img" [XAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
+                                                yield embedInAnchor a.videoUrl img
+                                            yield embedInAnchor a.infoUrl (XText a.title)
+                                            if suffix <> "" then
+                                                yield XText " "
+                                                yield makeElement "div" [cssClass ("type " + talkClass); suffix] :> obj
+                                        }
+                                    let rowNodes =
+                                        seq {
+                                            if firstEvent then
+                                                firstEvent <- false
+                                                yield monthCell :> obj
+                                            if firstAppearance then
+                                                firstAppearance <- false
+                                                yield eventCell :> obj
+                                            yield makeElement "td" appearanceNodes :> obj
+                                         }
+                                    makeElement "tr" rowNodes )
+                    |> List.rev
 
-                    let rowNodes =
-                        seq {
-                            if firstEvent then
-                                firstEvent <- false
-                                yield monthCell :> obj
-                            if firstAppearance then
-                                firstAppearance <- false
-                                yield eventCell :> obj
-                            yield appearanceCell :> obj
-                         }
-                    let row = makeElement "tr" rowNodes
-
-                    rows := row :: !rows
+                rows := appearanceElements @ !rows
 
     !rows |> List.rev
 
