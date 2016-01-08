@@ -37,19 +37,20 @@ let futureAndPastAppearances (appearances : Appearance list) =
     appearancesByEvent |> List.partition isFuture
 
 let makeElement name (children : obj seq) = 
-    System.Xml.Linq.XElement( System.Xml.Linq.XName.op_Implicit(name), children )
+    System.Xml.Linq.XElement( System.Xml.Linq.XName.op_Implicit(name), children ) :> obj
 
-let XAttr name value = System.Xml.Linq.XAttribute( System.Xml.Linq.XName.op_Implicit(name), value.ToString() ) :> obj
+let makeAttr name value = 
+    System.Xml.Linq.XAttribute( System.Xml.Linq.XName.op_Implicit(name), value.ToString() ) :> obj
 
 let embedInAnchor urlOpt node : obj =
     match urlOpt with
-    | Some url -> makeElement "a" [XAttr "href" url; node] :> obj
+    | Some url -> makeElement "a" [makeAttr "href" url; node]
     | None -> node
 
-let cssClass cls = XAttr "class" cls
+let cssClass cls = makeAttr "class" cls
 
 let makeAppearanceRows (appearances: EventsWithAppearances list) order =
-    let rows : System.Xml.Linq.XElement list ref = ref []
+    let rows : obj list ref = ref []
     let monthNames = [|"Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun"; "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec"|]
 
     let orderAppearance l =
@@ -67,7 +68,7 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                         makeElement "td"
                             [
                                 cssClass "year"
-                                XAttr "colspan" "3"
+                                makeAttr "colspan" "3"
                                 sprintf "%d" year
                             ]
                      ]
@@ -87,8 +88,8 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
             let monthCell = makeElement "td"
                                 [
                                     cssClass "month"
-                                    XAttr "rowspan" appearancesThisMonth
-                                    sprintf "%s" monthNames.[month-1] :> obj
+                                    makeAttr "rowspan" appearancesThisMonth
+                                    sprintf "%s" monthNames.[month-1]
                                 ]
 
             let eventsForTheMonth = monthEntry 
@@ -104,13 +105,13 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                 let eventCellChildren = 
                     seq {
                         yield cssClass "eventName"
-                        yield nameDiv :> obj
-                        yield XAttr "rowspan" ewa.appearances.Length
+                        yield nameDiv
+                        yield makeAttr "rowspan" ewa.appearances.Length
                         if event.location.IsSome then
                             let location = sprintf " (%s, %s)" event.location.Value.city event.location.Value.country
-                            yield makeElement "div" [cssClass "location"; location ] :> obj
+                            yield makeElement "div" [cssClass "location"; location ]
                         else if event.eventType = EventType.Podcast then
-                            yield makeElement "div" [cssClass "location"; "(podcast)" ] :> obj
+                            yield makeElement "div" [cssClass "location"; "(podcast)" ]
                     }
 
                 let eventCell = makeElement "td" eventCellChildren
@@ -131,22 +132,22 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                                         seq {
                                             yield cssClass "appearanceTitle"
                                             if a.imageName.IsSome then
-                                                let img = makeElement "img" [XAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
+                                                let img = makeElement "img" [makeAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
                                                 yield embedInAnchor a.videoUrl img
                                             yield embedInAnchor a.infoUrl a.title
                                             if suffix <> "" then
                                                 yield " " :> obj
-                                                yield makeElement "div" [cssClass ("type " + talkClass); suffix] :> obj
+                                                yield makeElement "div" [cssClass ("type " + talkClass); suffix]
                                         }
                                     let rowNodes =
                                         seq {
                                             if firstEvent then
                                                 firstEvent <- false
-                                                yield monthCell :> obj
+                                                yield monthCell
                                             if firstAppearance then
                                                 firstAppearance <- false
-                                                yield eventCell :> obj
-                                            yield makeElement "td" appearanceNodes :> obj
+                                                yield eventCell
+                                            yield makeElement "td" appearanceNodes
                                          }
                                     makeElement "tr" rowNodes )
                     |> List.rev
@@ -162,8 +163,8 @@ let main argv =
     let upcomingAppearances, pastAppearances = futureAndPastAppearances allAppearances
 
     // !TBD: makeAppearanceRows return seq of objects?
-    let pastTable = makeElement "table" (makeAppearanceRows pastAppearances AppearanceOrder.Reverse |> Seq.map( fun o -> o :> obj ) )
-    let futureTable = makeElement "table" (makeAppearanceRows upcomingAppearances AppearanceOrder.Forward |> Seq.map( fun o -> o :> obj ))
+    let pastTable = makeElement "table" (makeAppearanceRows pastAppearances AppearanceOrder.Reverse )
+    let futureTable = makeElement "table" (makeAppearanceRows upcomingAppearances AppearanceOrder.Forward )
 
     let futureTitle = makeElement "h1" ["Upcoming appearances"]
     let pastTitle = makeElement "h1" ["Past appearances"]
@@ -172,9 +173,9 @@ let main argv =
                 [
                     makeElement "link"
                         [
-                            XAttr "href" (cssPrefix + "appearances.css")
-                            XAttr "rel" "stylesheet"
-                            XAttr "type" "text/css"
+                            makeAttr "href" (cssPrefix + "appearances.css")
+                            makeAttr "rel" "stylesheet"
+                            makeAttr "type" "text/css"
                         ]
                 ]
 
@@ -190,6 +191,7 @@ let main argv =
                             pastTable
                         ]
                 ]
+              :?> System.Xml.Linq.XElement
 
     printf "%s\n" (xml.ToString())
     xml.Save( "/Development/Scratch/Appearances/output/index.html" )
