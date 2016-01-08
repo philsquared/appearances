@@ -103,20 +103,24 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
             let mutable firstEvent = true
             for ewa in eventsForTheMonth do
                 let event = ewa.key.event
-                let eventCell = XElement( "td",
-                                    cssClass "eventName",
-                                    XAttr "rowspan" ewa.appearances.Length )
                 let nameBlock = embedInAnchor event.url (XText event.name )
                 let nameDiv = XElement( "div", nameBlock )
-                eventCell.Add( nameDiv )
-                if event.location.IsSome then
-                    let location = sprintf " (%s, %s)" event.location.Value.city event.location.Value.country
-                    eventCell.Add( XElement( "div", cssClass "location", location ) )
-                else if event.eventType = EventType.Podcast then
-                    eventCell.Add( XElement( "div", cssClass "location", "(podcast)" ) )
+                let eventCellChildren = 
+                    seq {
+                        yield cssClass "eventName"
+                        yield nameDiv :> obj
+                        yield XAttr "rowspan" ewa.appearances.Length
+                        if event.location.IsSome then
+                            let location = sprintf " (%s, %s)" event.location.Value.city event.location.Value.country
+                            yield XElement( "div", cssClass "location", location ) :> obj
+                        else if event.eventType = EventType.Podcast then
+                            yield XElement( "div", cssClass "location", "(podcast)" ) :> obj
+                    }
 
-                let mutable firstAppearance = true
+                let eventCell = makeElement "td" eventCellChildren
+
                 let appearanceElements =
+                    let mutable firstAppearance = true
                     ewa.appearances 
                     |> List.map( fun a ->
                                     let suffix, talkClass = 
