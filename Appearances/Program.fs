@@ -44,12 +44,12 @@ type XElement (name:string, [<System.ParamArray>] values:obj []) =
 let makeElement name (children : obj seq) = 
     System.Xml.Linq.XElement( System.Xml.Linq.XName.op_Implicit(name), children )
 
-let XAttr name value = System.Xml.Linq.XAttribute( System.Xml.Linq.XName.op_Implicit(name), value.ToString() )
-let XText value = System.Xml.Linq.XText( value.ToString() )
+let XAttr name value = System.Xml.Linq.XAttribute( System.Xml.Linq.XName.op_Implicit(name), value.ToString() ) :> obj
+let XText value = System.Xml.Linq.XText( value.ToString() ) :> obj
 
-let embedInAnchor urlOpt node : System.Xml.Linq.XNode =
+let embedInAnchor urlOpt node : obj =
     match urlOpt with
-    | Some( url ) -> XElement( "a", XAttr "href" url, node ) :> System.Xml.Linq.XNode
+    | Some( url ) -> XElement( "a", XAttr "href" url, node ) :> obj
     | None -> node
 
 let cssClass cls = XAttr "class" cls
@@ -125,36 +125,30 @@ let makeAppearanceRows (appearances: EventsWithAppearances list) order =
                         | AppearanceType.Interview ->       "[podcast interview]", "interview"
                         | _ ->                              "", ""
 
-                    let appearanceNodes : obj list =
-                        [cssClass "appearanceTitle"]
-                        @
-                        if a.imageName.IsSome then
-                            let img = makeElement "img" [XAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
-                            [embedInAnchor a.videoUrl img]
-                        else
-                            []
-                        @
-                        [embedInAnchor a.infoUrl (XText a.title)]
-                        @
-                        if suffix <> "" then
-                            [ XText " "; makeElement "div" [cssClass ("type " + talkClass); suffix] ]
-                        else
-                            []                        
+                    let appearanceNodes =
+                        seq {
+                            yield cssClass "appearanceTitle"
+                            if a.imageName.IsSome then
+                                let img = makeElement "img" [XAttr "src" (imagePrefix + a.imageName.Value); cssClass "thumbnail"]
+                                yield embedInAnchor a.videoUrl img
+                            yield embedInAnchor a.infoUrl (XText a.title)
+                            if suffix <> "" then
+                                yield XText " "
+                                yield makeElement "div" [cssClass ("type " + talkClass); suffix] :> obj
+                        }
                     let appearanceCell = makeElement "td" appearanceNodes
 
-                    let rowNodes : obj list =
-                        if firstEvent then
-                            firstEvent <- false
-                            [monthCell]
-                         else
-                            []
-                        @
-                        if firstAppearance then
-                            firstAppearance <- false
-                            [eventCell]
-                        else
-                            []
-                    let row = makeElement "tr" (rowNodes @ [appearanceCell])
+                    let rowNodes =
+                        seq {
+                            if firstEvent then
+                                firstEvent <- false
+                                yield monthCell :> obj
+                            if firstAppearance then
+                                firstAppearance <- false
+                                yield eventCell :> obj
+                            yield appearanceCell :> obj
+                         }
+                    let row = makeElement "tr" rowNodes
 
                     rows := row :: !rows
 
