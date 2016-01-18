@@ -89,7 +89,7 @@ let functionalLondoners = {
 let seattleFsharpMeetup = {
         eventType = EventType.Meetup
         name = "Seattle F# Meetup"
-        location = Some { city = "Seattle"; country = "USA" }
+        location = Some { city = "Redmond"; country = "USA" }
         url = Some "http://www.meetup.com/FSharpSeattle"
     }
 let meetingCpp2014 = {
