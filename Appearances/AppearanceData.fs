@@ -6,21 +6,57 @@ open EventData
 
 let allAppearances = [
     {
+        event = meetingCpp2016
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit";
+        infoUrl = None
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-11-18"
+    }
+    {
+        event = bcsEdinburgh
+        appearanceType = AppearanceType.Talk
+        title = "Swift for the curious"
+        infoUrl = None
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-11-05"
+    }
+    {
+        event = norDevMeetup
+        appearanceType = AppearanceType.Talk
+        title = "Swift for the curious"
+        infoUrl = Some "http://www.meetup.com/Norfolk-Developers-NorDev/events/232490441/"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-09-07"
+    }
+    {
+        event = qCon2016
+        appearanceType = AppearanceType.Talk
+        title = "Mens Sana In Corpore Sano - Optimising Mind & Body";
+        infoUrl = Some "http://qconlondon.com/presentation/mens-sana-corpore-sano-optimising-mind-body"
+        videoUrl = Some "https://www.infoq.com/presentations/health-mind-body"
+        imageName = Some "qcon2016.jpg"
+        date = System.DateTime.Parse "2016-03-08"
+    }
+    {
         event = accu2016
         appearanceType = AppearanceType.Talk
         title = "Swift for the curious"
-        infoUrl = None // !TBD
+        infoUrl = Some "http://accu.org/index.php/conferences/accu_conference_2016/accu2016_sessions#Swift_for_the_Curious"
         videoUrl = None
         imageName = None
-        date = System.DateTime.Parse "2016-04-23" // !TBD: add correct date
+        date = System.DateTime.Parse "2016-04-20"
     }
     {
         event = ndcLondon
         appearanceType = AppearanceType.Talk
         title = "Seeking Simplicity"
         infoUrl = Some "http://ndc-london.com/talk/phil-nash"
-        videoUrl = None
-        imageName = None
+        videoUrl = Some "https://vimeo.com/157716613"
+        imageName = Some "functional2015-simplicity.jpg"
         date = System.DateTime.Parse "2016-01-13"
     }
     {
@@ -406,8 +442,8 @@ let allAppearances = [
         appearanceType = AppearanceType.Talk
         title = "Seeking Simplicity"
         infoUrl = Some "http://www.meetup.com/FSharpLondon/events/223918135/t/ra1_te/"
-        videoUrl = None
-        imageName = None
+        videoUrl = Some "https://skillsmatter.com/skillscasts/6810-seeking-simplicity-with-phil-nash"
+        imageName = Some "functional2015-simplicity.jpg"
         date = System.DateTime.Parse "2015-10-08"
     }
     {
@@ -415,8 +451,8 @@ let allAppearances = [
         appearanceType = AppearanceType.LightningTalk
         title = "The Stand Up"
         infoUrl = None
-        videoUrl = None
-        imageName = None
+        videoUrl = Some "https://skillsmatter.com/skillscasts/6810-seeking-simplicity-with-phil-nash"
+        imageName = Some "functional2015-thestandup.jpg"
         date = System.DateTime.Parse "2015-10-08"
     }
     {
@@ -424,8 +460,8 @@ let allAppearances = [
         appearanceType = AppearanceType.Talk
         title = "Seeking Simplicity"
         infoUrl = Some "http://www.nordevcon.com/sessions/#philnash"
-        videoUrl = None
-        imageName = None
+        videoUrl = Some "https://youtu.be/ySR8eALeRNU"
+        imageName = Some "nordevcon2016.jpg"
         date = System.DateTime.Parse "2016-02-27"
     }
 ]

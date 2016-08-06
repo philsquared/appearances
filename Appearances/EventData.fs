@@ -2,6 +2,12 @@
 
 open Model
 
+let qCon2016 = {
+        eventType = EventType.Conference
+        name = "QCon"
+        location = Some { city = "London"; country = "UK" }
+        url = Some "http://qconlondon.com" // !TBD update with 2016 specific URL
+    }
 let ndcLondon = {
         eventType = EventType.Conference
         name = "NDC London"
@@ -91,6 +97,12 @@ let seattleFsharpMeetup = {
         name = "Seattle F# Meetup"
         location = Some { city = "Redmond"; country = "USA" }
         url = Some "http://www.meetup.com/FSharpSeattle"
+    }
+let meetingCpp2016 = {
+        eventType = EventType.Conference
+        name = "MeetingC++"
+        location = Some { city = "Berlin"; country = "Germany" }
+        url = Some "https://meetingcpp.com/index.php/speaker16.html"
     }
 let meetingCpp2014 = {
         eventType = EventType.Conference
