@@ -6,10 +6,19 @@ open EventData
 
 let allAppearances = [
     {
+        event = iosCon2017
+        appearanceType = AppearanceType.Talk
+        title = "Test Driving Swift To The Max - with or without the tests!";
+        infoUrl = Some "https://skillsmatter.com/conferences/8180-ioscon-2017-the-conference-for-ios-and-swift-developers#program"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2017-03-31"
+    }
+    {
         event = meetingCpp2016
         appearanceType = AppearanceType.Talk
         title = "Functional C++ For Fun and Profit";
-        infoUrl = None
+        infoUrl = Some "https://meetingcpp.com/index.php/tv16/items/19.html"
         videoUrl = None
         imageName = None
         date = System.DateTime.Parse "2016-11-18"
@@ -18,7 +27,7 @@ let allAppearances = [
         event = bcsEdinburgh
         appearanceType = AppearanceType.Talk
         title = "Swift for the curious"
-        infoUrl = None
+        infoUrl = Some "http://edinburgh.bcs.org/events/2016/161005.htm"
         videoUrl = None
         imageName = None
         date = System.DateTime.Parse "2016-11-05"
@@ -40,6 +49,15 @@ let allAppearances = [
         videoUrl = Some "https://www.infoq.com/presentations/health-mind-body"
         imageName = Some "qcon2016.jpg"
         date = System.DateTime.Parse "2016-03-08"
+    }
+    {
+        event = accu2017
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit"
+        infoUrl = None
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2017-04-26" // update when date known
     }
     {
         event = accu2016
@@ -463,6 +481,60 @@ let allAppearances = [
         videoUrl = Some "https://youtu.be/ySR8eALeRNU"
         imageName = Some "nordevcon2016.jpg"
         date = System.DateTime.Parse "2016-02-27"
+    }
+    {
+        event = norDevCon2017
+        appearanceType = AppearanceType.Talk
+        title = "Test Driving Swift To The Max - with or without the tests"
+        infoUrl = None
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2017-02-27" // !TBD: update date once known
+    }
+    {
+        event = accuBristol
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit"
+        infoUrl = Some "https://www.meetup.com/ACCU-Bristol/events/235098264"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-11-15"
+    }
+    {
+        event = accuLondon
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit"
+        infoUrl = Some "https://skillsmatter.com/meetups/8480-accu-london-meeup"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-11-30"
+    }
+    {
+        event = accuOxford
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit"
+        infoUrl = Some "http://www.meetup.com/ACCU-Oxford/events/233349127"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-11-29"
+    }
+    {
+        event = spbMeetup
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit"
+        infoUrl = Some "http://www.meetup.com/St-Petersburg-CPP-User-Group/events/234305828/"
+        videoUrl = Some "https://www.youtube.com/watch?v=YgcUuYCCV14"
+        imageName = Some "spb-fcpp2016.jpg"
+        date = System.DateTime.Parse "2016-11-23"
+    }
+    {
+        event = munichCppUserGroup
+        appearanceType = AppearanceType.Talk
+        title = "Functional C++ For Fun and Profit"
+        infoUrl = Some "https://www.meetup.com/MUCplusplus/events/235593620/"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2016-12-20"
     }
 ]
 

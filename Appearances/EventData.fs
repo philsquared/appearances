@@ -2,11 +2,17 @@
 
 open Model
 
+let iosCon2017 = {
+        eventType = EventType.Conference
+        name = "iOSCon 2017"
+        location = Some { city = "London"; country = "UK" }
+        url = Some "https://skillsmatter.com/conferences/8180-ioscon-2017-the-conference-for-ios-and-swift-developers"
+    }
 let qCon2016 = {
         eventType = EventType.Conference
         name = "QCon"
         location = Some { city = "London"; country = "UK" }
-        url = Some "http://qconlondon.com" // !TBD update with 2016 specific URL
+        url = Some "https://qconlondon.com/london-2016/index.html"
     }
 let ndcLondon = {
         eventType = EventType.Conference
@@ -19,6 +25,12 @@ let ndcOslo = {
         name = "NDC Oslo"
         location = Some { city = "Oslo"; country = "Norway" }
         url = Some "http://ndcoslo.com"
+    }
+let accu2017 = {
+        eventType = EventType.Conference
+        name = "Accu 2017"
+        location = Some { city = "Bristol"; country = "UK" }
+        url = Some "http://accu.org/index.php/conferences/accu_conference_2017"
     }
 let accu2016 = {
         eventType = EventType.Conference
@@ -84,7 +96,19 @@ let accuLondon = {
         eventType = EventType.Meetup
         name = "Accu London"
         location = Some { city = "London"; country = "UK" }
-        url = None
+        url = Some "http://www.meetup.com/ACCULondon"
+    }
+let accuBristol = {
+        eventType = EventType.Meetup
+        name = "Accu Bristol"
+        location = Some { city = "Bristol"; country = "UK" }
+        url = Some "https://www.meetup.com/ACCU-Bristol"
+    }
+let accuOxford = {
+        eventType = EventType.Meetup
+        name = "Accu Oxford"
+        location = Some { city = "Oxford"; country = "UK" }
+        url = Some "http://www.meetup.com/ACCU-Oxford"
     }
 let functionalLondoners = {
         eventType = EventType.Meetup
@@ -102,7 +126,7 @@ let meetingCpp2016 = {
         eventType = EventType.Conference
         name = "MeetingC++"
         location = Some { city = "Berlin"; country = "Germany" }
-        url = Some "https://meetingcpp.com/index.php/speaker16.html"
+        url = Some "https://meetingcpp.com/index.php/schedule16.html"
     }
 let meetingCpp2014 = {
         eventType = EventType.Conference
@@ -136,6 +160,12 @@ let norDevCon2014 = {
         url = Some "http://www.nordevcon.com/nordevcon2014"
     }
 let norDevCon2016 = {
+        eventType = EventType.Conference
+        name = "NorDevCon"
+        location = Some { city = "Norwich"; country = "UK" }
+        url = Some "http://www.nordevcon.com"
+    }
+let norDevCon2017 = {
         eventType = EventType.Conference
         name = "NorDevCon"
         location = Some { city = "Norwich"; country = "UK" }
@@ -206,4 +236,16 @@ let aylesburyTesters = {
         name = "Aylesbury Testers"
         location = Some { city = "Aylesbury"; country = "UK" }
         url = Some "http://www.meetup.com/SoftwareTestingClub/events/223732954/?a=ro2_gnl&gj=ro2_e&rv=ro2_e&_af=event&_af_eid=223732954&https=off"
+    }
+let spbMeetup = {
+        eventType = EventType.Meetup
+        name = "St. Petersburg C++ User Group"
+        location = Some { city = "St. Petersburg"; country = "Russia" }
+        url = Some "http://www.meetup.com/St-Petersburg-CPP-User-Group"
+    }
+let munichCppUserGroup = {
+        eventType = EventType.Meetup
+        name = "Munich C++ User Group"
+        location = Some { city = "Munich"; country = "Germany" }
+        url = Some "https://www.meetup.com/MUCplusplus/"
     }
