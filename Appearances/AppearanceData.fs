@@ -6,6 +6,15 @@ open EventData
 
 let allAppearances = [
     {
+        event = appDevCon2017
+        appearanceType = AppearanceType.Talk
+        title = "Test Driving Swift To The Max";
+        infoUrl = Some "http://appdevcon.nl/session/phil-nash-test-driving-swift-to-the-max/"
+        videoUrl = None
+        imageName = None
+        date = System.DateTime.Parse "2017-03-17"
+    }    
+    {
         event = iosCon2017
         appearanceType = AppearanceType.Talk
         title = "Test Driving Swift To The Max - with or without the tests!";
@@ -19,8 +28,8 @@ let allAppearances = [
         appearanceType = AppearanceType.Talk
         title = "Functional C++ For Fun and Profit";
         infoUrl = Some "https://meetingcpp.com/index.php/tv16/items/19.html"
-        videoUrl = None
-        imageName = None
+        videoUrl = Some "https://www.youtube.com/watch?v=X6bXoOlNw0M"
+        imageName = Some "meetingcpp2016.jpg"
         date = System.DateTime.Parse "2016-11-18"
     }
     {
@@ -486,10 +495,10 @@ let allAppearances = [
         event = norDevCon2017
         appearanceType = AppearanceType.Talk
         title = "Test Driving Swift To The Max - with or without the tests"
-        infoUrl = None
+        infoUrl = Some "http://www.nordevcon.com/nordevcon2017/#swiftmax"
         videoUrl = None
         imageName = None
-        date = System.DateTime.Parse "2017-02-27" // !TBD: update date once known
+        date = System.DateTime.Parse "2017-02-25"
     }
     {
         event = accuBristol

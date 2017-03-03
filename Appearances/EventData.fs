@@ -2,6 +2,12 @@
 
 open Model
 
+let appDevCon2017 = {
+        eventType = EventType.Conference
+        name = "AppDevCon 2017"
+        location = Some { city = "Amsterdam"; country = "Netherlands" }
+        url = Some "http://appdevcon.nl"
+    }
 let iosCon2017 = {
         eventType = EventType.Conference
         name = "iOSCon 2017"
